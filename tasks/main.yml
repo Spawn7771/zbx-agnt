@@ -12,11 +12,11 @@
         state: present
       when: ansible_facts['distribution'] == "Ubuntu"
 
-    - name: "Centos | Install basic repo file and add GPG key"
+    - name: "Centos | Install basic repo file"
       yum: 
         name: https://repo.zabbix.com/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm
         state: present
-      when: ansible_facts['distribution'] == "Centos"
+      when: ansible_facts['distribution'] == "CentOS"
 
     - name: Install zabbix-agent package
       apt: name={{ item }} state=latest
@@ -30,7 +30,7 @@
         state: latest
       with_items:
         - zabbix-agent
-      when: ansible_facts['distribution'] == "Centos"
+      when: ansible_facts['distribution'] == "CentOS"
 
 
     - name: Create agent hostname
@@ -73,6 +73,7 @@
         login_password: "{{ ZABBIX_SERVER_PASS }}"
         host_name: "{{ ansible_hostname }}"
         validate_certs: no
+        visible_name: "{{ ansible_fqdn }}"
         host_groups: "{{ zabbix_host_groups }}"
         link_templates: "{{ zabbix_link_templates }}"
         status: enabled
