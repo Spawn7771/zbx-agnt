@@ -1,6 +1,6 @@
 ---
 # handlers file for zabbix-agnt
-- name: Restart zabbix-agent service
+- name: restart zabbix-agent
     systemd:
       name: zabbix-agent
       state: restarted

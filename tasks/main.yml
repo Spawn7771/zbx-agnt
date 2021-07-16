@@ -63,7 +63,7 @@
        name: zabbix-agent
        enabled: yes
       notify:
-        - restart zabbix-agent
+        - "restart zabbix-agent"
 
     - name: Create a new host or update an existing host info
       local_action:
