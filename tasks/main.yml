@@ -68,7 +68,6 @@
       local_action:
         module: community.zabbix.zabbix_host
         server_url: "{{ ZABBIX_SERVER_HOST }}"
-        #server_url: "https://zbx.noveogroup.com/zabbix/"
         login_user: "{{ ZABBIX_SERVER_LOGIN }}"
         login_password: "{{ ZABBIX_SERVER_PASS }}"
         host_name: "{{ ansible_hostname }}"
