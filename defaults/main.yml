@@ -1,0 +1,9 @@
+---
+# defaults file for zabbix-agnt
+
+ZABBIX_SERVER_IP: 10.0.6.174
+ZABBIX_SERVER_HOST: "https://zbx.noveogroup.com/zabbix/"
+ZABBIX_SERVER_LOGIN: ekulinich
+ZABBIX_SERVER_PASS: Ud2q6gcgtbEnA4b
+
+

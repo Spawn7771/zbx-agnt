@@ -1,0 +1,82 @@
+---
+# tasks file for zabbix-agnt
+---
+    - name: "Debian | Install gpg key"
+      apt_key:
+        id: A14FE591
+        url: http://repo.zabbix.com/zabbix-official-repo.key
+      when: ansible_facts['distribution'] == "Ubuntu"
+
+    - name: "Ubuntu | Add zabbix repository ubuntu"
+      apt_repository:
+        repo: "deb https://repo.zabbix.com/zabbix/4.4/ubuntu/ {{ ansible_distribution_release }} main"
+        state: present
+      when: ansible_facts['distribution'] == "Ubuntu"
+
+    - name: "Centos | Install basic repo file and add GPG key"
+      yum: 
+        name: https://repo.zabbix.com/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm
+        state: present
+      when: ansible_facts['distribution'] == "Centos"
+
+    - name: Install zabbix-agent package
+      apt: name={{ item }} state=latest
+      with_items:
+        - zabbix-agent
+      when: ansible_facts['distribution'] == "Ubuntu"
+
+    - name: Install zabbix-agent package
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - zabbix-agent
+      when: ansible_facts['distribution'] == "Centos"
+
+
+    - name: Create agent hostname
+      lineinfile:
+        dest: /etc/zabbix/zabbix_agentd.conf
+        regexp: ^Hostname=.*
+        insertafter: ^# Hostname=
+        line: Hostname={{ ansible_hostname }}  # переменная берется из фактов
+
+
+    - name: Create agent server
+      lineinfile:
+        dest: /etc/zabbix/zabbix_agentd.conf
+        regexp: ^Server=.*
+        insertafter: ^# Server=
+        line: Server={{ ZABBIX_SERVER_IP }}
+
+
+    - name: Create agent serveractive
+      lineinfile:
+        dest: /etc/zabbix/zabbix_agentd.conf
+        regexp: ^ServerActive=.*
+        insertafter: ^# ServerActive=
+        line: ServerActive={{ ZABBIX_SERVER_IP }}
+
+
+    - name: Enable zabbix service
+      systemd:
+       name: zabbix-agent
+       enabled: yes
+      notify:
+        - restart zabbix-agent
+
+    - name: Create a new host or update an existing host info
+      local_action:
+        module: community.zabbix.zabbix_host
+        #server_url: " {{ ZABBIX_SERVER_HOST }} "
+        server_url: "https://zbx.noveogroup.com/zabbix/"
+        login_user: "{{ ZABBIX_SERVER_LOGIN }}"
+        login_password: "{{ ZABBIX_SERVER_PASS }}"
+        host_name: "{{ ansible_hostname }}"
+        validate_certs: no
+        host_groups: "{{ zabbix_host_groups }}"
+        link_templates: "{{ zabbix_link_templates }}"
+        status: enabled
+        state: present
+        inventory_mode: manual
+        interfaces: "{{ zabbix_agent_interfaces }}"
