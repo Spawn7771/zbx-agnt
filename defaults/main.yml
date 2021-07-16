@@ -6,4 +6,15 @@ ZABBIX_SERVER_HOST: "https://zbx.noveogroup.com/zabbix/"
 ZABBIX_SERVER_LOGIN: ekulinich
 ZABBIX_SERVER_PASS: Ud2q6gcgtbEnA4b
 
+zabbix_host_groups:
+  - sysadmin
+zabbix_link_templates:
+  - Template OS Linux
 
+zabbix_agent_interfaces:
+  - type: 1
+    main: 1
+    useip: 1
+    ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    dns: ""
+    port: "10050"
